@@ -9,7 +9,10 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.TextView;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -25,6 +28,8 @@ public class DatePickerFragment extends DialogFragment {
     private static final String ARG_DATE = "date";
 
     private DatePicker mDatePicker;
+    private TextView mTitleTextView;
+    private Button mOkButton;
 
     public static DatePickerFragment newInstance(Date date) {
         Bundle args = new Bundle();
@@ -34,7 +39,7 @@ public class DatePickerFragment extends DialogFragment {
         fragment.setArguments(args);
         return fragment;
     }
-
+/*
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Date date = (Date) getArguments().getSerializable(ARG_DATE);
@@ -66,7 +71,7 @@ public class DatePickerFragment extends DialogFragment {
                 })
                 .create();
     }
-
+*/
     private void sendResult(int resultCode, Date date) {
         if (getTargetFragment() == null) {
             return;
@@ -76,5 +81,18 @@ public class DatePickerFragment extends DialogFragment {
         intent.putExtra(EXTRA_DATE, date);
 
         getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.dialog_date, container, false);
+
+        mTitleTextView = (TextView) v.findViewById(R.id.dialog_date_title);
+
+        mDatePicker = (DatePicker) v.findViewById(R.id.dialog_date_date_picker);
+
+        mOkButton = (Button) v.findViewById(R.id.dialog_date_button_ok);
+
+        return v;
     }
 }
