@@ -17,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -109,7 +110,11 @@ public class CrimeFragment extends Fragment {
 
         if (requestCode == REQUEST_CODE) {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
-            mCrime.setDate(date);
+
+            mCrime.getDate().setYear(date.getYear());
+            mCrime.getDate().setMonth(date.getMonth());
+            mCrime.getDate().setDate(date.getDate());
+
             updateDate();
         }
     }
