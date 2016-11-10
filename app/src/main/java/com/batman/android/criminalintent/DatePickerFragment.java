@@ -28,6 +28,9 @@ public class DatePickerFragment extends DialogFragment {
 
     private static final String ARG_DATE = "date";
 
+    private int Year;
+    private int Month;
+    private int Day;
     private DatePicker mDatePicker;
     private TextView mTitleTextView;
     private Button mOkButton;
@@ -73,6 +76,18 @@ public class DatePickerFragment extends DialogFragment {
                 .create();
     }
 */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Date date = (Date) getArguments().getSerializable(ARG_DATE);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        Year = calendar.get(Calendar.YEAR);
+        Month = calendar.get(Calendar.MONTH);
+        Day = calendar.get(Calendar.DAY_OF_MONTH);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -81,16 +96,17 @@ public class DatePickerFragment extends DialogFragment {
         mTitleTextView = (TextView) v.findViewById(R.id.dialog_date_title);
 
         mDatePicker = (DatePicker) v.findViewById(R.id.dialog_date_date_picker);
+        mDatePicker.init(Year, Month, Day, null);
 
         mOkButton = (Button) v.findViewById(R.id.dialog_date_button_ok);
         mOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int year = mDatePicker.getYear();
-                int month = mDatePicker.getMonth();
-                int day = mDatePicker.getDayOfMonth();
+                Year = mDatePicker.getYear();
+                Month = mDatePicker.getMonth();
+                Day = mDatePicker.getDayOfMonth();
 
-                Date date = new GregorianCalendar(year, month, day).getTime();
+                Date date = new GregorianCalendar(Year, Month, Day).getTime();
                 sendResult(Activity.RESULT_OK, date);
                 dismiss();
             }
