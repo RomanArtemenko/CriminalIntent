@@ -16,9 +16,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.UUID;
 
 /**
@@ -86,7 +88,7 @@ public class CrimeFragment extends Fragment {
                 DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
                 dialog.setTargetFragment(CrimeFragment.this, REQUEST_CODE);
                 dialog.show(manager, DIALOG_DATE);*/
-                Intent intent = DatePickerActivity.newIntent(getActivity(), mCrime.getDate());
+                Intent intent = DatePickerActivity.newIntent(getActivity(),mCrime.getDate());
                 startActivityForResult(intent, REQUEST_CODE);
             }
         });
@@ -116,6 +118,8 @@ public class CrimeFragment extends Fragment {
             mCrime.getDate().setYear(date.getYear());
             mCrime.getDate().setMonth(date.getMonth());
             mCrime.getDate().setDate(date.getDate());
+
+           // Toast.makeText(getActivity(), "TEST", Toast.LENGTH_LONG);
 
             updateDate();
         }
