@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +27,8 @@ public class CrimeListFragment extends Fragment {
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
 
     private RecyclerView mCrimeRecyclerView;
+    private TextView mInfoTextView;
+    private Button mNewCrimeButton;
     private CrimeAdapter mAdapter;
     private boolean mSubtitleVisible;
 
@@ -41,6 +44,17 @@ public class CrimeListFragment extends Fragment {
 
         mCrimeRecyclerView = (RecyclerView) view.findViewById(R.id.crime_recycler_view);
         mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        mInfoTextView = (TextView) view.findViewById(R.id.new_crime_text_view);
+
+        mNewCrimeButton = (Button) view.findViewById(R.id.new_crime_button);
+        mNewCrimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast toast = Toast.makeText(getActivity(), "add new crime", Toast.LENGTH_LONG);
+                toast.show();
+            }
+        });
 
         if (savedInstanceState != null) {
             mSubtitleVisible = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE);
@@ -101,6 +115,14 @@ public class CrimeListFragment extends Fragment {
 
         if (!mSubtitleVisible) {
             subtitle = null;
+        }
+
+        if (crimeSize == 0) {
+            mInfoTextView.setVisibility(View.VISIBLE);
+            mNewCrimeButton.setVisibility(View.VISIBLE);
+        } else {
+            mInfoTextView.setVisibility(View.INVISIBLE);
+            mNewCrimeButton.setVisibility(View.INVISIBLE);
         }
 
         AppCompatActivity activity = (AppCompatActivity) getActivity();
