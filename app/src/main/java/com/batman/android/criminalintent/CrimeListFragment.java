@@ -51,8 +51,7 @@ public class CrimeListFragment extends Fragment {
         mNewCrimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast toast = Toast.makeText(getActivity(), "add new crime", Toast.LENGTH_LONG);
-                toast.show();
+                addNewCrime();
             }
         });
 
@@ -93,10 +92,7 @@ public class CrimeListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_new_crime:
-                Crime crime = new Crime();
-                CrimeLab.get(getActivity()).addCrime(crime);
-                Intent intent = CrimePagerActivity.newIntent(getActivity(), crime.getId());
-                startActivity(intent);
+                addNewCrime();
                 return true;
             case R.id.menu_item_show_subtitle:
                 mSubtitleVisible = !mSubtitleVisible;
@@ -106,6 +102,13 @@ public class CrimeListFragment extends Fragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void addNewCrime() {
+        Crime crime = new Crime();
+        CrimeLab.get(getActivity()).addCrime(crime);
+        Intent intent = CrimePagerActivity.newIntent(getActivity(), crime.getId());
+        startActivity(intent);
     }
 
     private void updateSubtitle() {
@@ -121,8 +124,8 @@ public class CrimeListFragment extends Fragment {
             mInfoTextView.setVisibility(View.VISIBLE);
             mNewCrimeButton.setVisibility(View.VISIBLE);
         } else {
-            mInfoTextView.setVisibility(View.INVISIBLE);
-            mNewCrimeButton.setVisibility(View.INVISIBLE);
+            mInfoTextView.setVisibility(View.GONE);
+            mNewCrimeButton.setVisibility(View.GONE);
         }
 
         AppCompatActivity activity = (AppCompatActivity) getActivity();
