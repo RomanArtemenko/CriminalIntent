@@ -30,8 +30,11 @@ public class Crime {
     private boolean mSolved;
 
     public Crime() {
-        //Генерирование уникального индентификатора
-        mId = UUID.randomUUID();
+        this(UUID.randomUUID());
+    }
+
+    public Crime(UUID id) {
+        mId = id;
         mDate = new Date();
     }
 
