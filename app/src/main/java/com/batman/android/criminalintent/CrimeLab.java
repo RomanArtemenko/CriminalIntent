@@ -41,6 +41,13 @@ public class CrimeLab {
         mDatabase.insert(CrimeTable.NAME, null, values);
     }
 
+    public void delCrime(Crime crime) {
+        String uuidString = crime.getId().toString();
+        mDatabase.delete(CrimeTable.NAME,
+                CrimeTable.Cols.UUID + " = ?",
+                new String[] {uuidString});
+    }
+
     public List<Crime> getCrimes() {
         List<Crime> crimes = new ArrayList<>();
 
@@ -61,7 +68,7 @@ public class CrimeLab {
 
     public Crime getCrime(UUID id) {
         CrimeCursorWrapper cursor = queryCrimes(
-                CrimeTable.Cols.UUID + " =?",
+                CrimeTable.Cols.UUID + " = ?",
                 new String[] {id.toString()}
         );
 
