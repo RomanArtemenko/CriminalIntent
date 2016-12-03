@@ -3,6 +3,8 @@ package com.batman.android.criminalintent;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
@@ -170,6 +172,32 @@ public class CrimeFragment extends Fragment {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setDate(date);
             updateDate();
+        } else {
+            Uri contactUri = data.getData();
+
+            // Определение полей, значения которых должны быть
+            // возвращены запросом.
+            String[] queryFields = new String[] {
+                    ContactsContract.Contacts.DISPLAY_NAME
+            };
+            // Выполнение запроса - contactUri здесь выполняет функции
+            // условия "where"
+            Cursor c = getActivity().getContentResolver()
+                    .query(contactUri, queryFields, null, null, null);
+
+            try {
+                // Проверка получения результатов
+                if (c.getCount() == 0) {
+                    return;
+                }
+                // Извлечение первого столбца данных - имени подозреваемого.
+                c.moveToFirst();
+                String suspect = c.getString(0);
+                mCrime.setSuspect(suspect);
+                mSuspectButton.setText(suspect);
+            } finally {
+                c.close();
+            }
         }
     }
 
