@@ -140,8 +140,20 @@ public class CrimeFragment extends Fragment {
             }
         });
 
-        if (mCrime.getSuspect() != null) {
-            mSuspectButton.setText(mCrime.getSuspect());
+        mCallButton = (Button) v.findViewById(R.id.call_suspect);
+        mCallButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast toast = Toast.makeText(getContext(),"Call to suspect with ID:" + mCrime.getSuspectId(),Toast.LENGTH_LONG);
+                toast.show();
+            }
+        });
+
+        if (mCrime.getSuspectId() != 0) {
+            mSuspectButton.setText(mCrime.getSuspectName());
+            mCallButton.setEnabled(true);
+        } else {
+            mCallButton.setEnabled(false);
         }
 
         PackageManager packageManager = getActivity().getPackageManager();
@@ -149,15 +161,6 @@ public class CrimeFragment extends Fragment {
                 PackageManager.MATCH_DEFAULT_ONLY) == null) {
             mSuspectButton.setEnabled(false);
         }
-
-        mCallButton = (Button) v.findViewById(R.id.call_suspect);
-        mCallButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast toast = Toast.makeText(getContext(),"Call to suspect ...",Toast.LENGTH_LONG);
-                toast.show();
-            }
-        });
 
         return v;
     }
@@ -196,6 +199,7 @@ public class CrimeFragment extends Fragment {
             // Определение полей, значения которых должны быть
             // возвращены запросом.
             String[] queryFields = new String[] {
+                    ContactsContract.Contacts._ID,
                     ContactsContract.Contacts.DISPLAY_NAME
             };
             // Выполнение запроса - contactUri здесь выполняет функции
@@ -210,9 +214,11 @@ public class CrimeFragment extends Fragment {
                 }
                 // Извлечение первого столбца данных - имени подозреваемого.
                 c.moveToFirst();
-                String suspect = c.getString(0);
-                mCrime.setSuspect(suspect);
-                mSuspectButton.setText(suspect);
+                long suspectId = c.getLong(0);
+                String suspectName = c.getString(1);
+                mCrime.setSuspectName(suspectName);
+                mCrime.setSuspectId(suspectId);
+                mSuspectButton.setText(suspectName);
             } finally {
                 c.close();
             }
@@ -234,18 +240,18 @@ public class CrimeFragment extends Fragment {
         String dateFormat = "EEE, MMM, dd";
         String dateString = DateFormat.format(dateFormat, mCrime.getDate()).toString();
 
-        String suspect = mCrime.getSuspect();
-        if (suspect == null) {
-            suspect = getString(R.string.crime_report_no_suspect);
+        String suspectName = mCrime.getSuspectName();
+        if (suspectName == null) {
+            suspectName = getString(R.string.crime_report_no_suspect);
         } else {
-            suspect = getString(R.string.crime_report_suspect);
+            suspectName = getString(R.string.crime_report_suspect, suspectName);
         }
 
         String report = getString(R.string.crime_report,
                                 mCrime.getTitle(),
                                 dateString,
                                 solvedString,
-                                suspect);
+                                suspectName);
 
         return report;
     }
