@@ -2,6 +2,7 @@ package com.batman.android.criminalintent;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -38,6 +39,7 @@ public class CrimeFragment extends Fragment {
 
     private static final int REQUEST_CODE = 0;
     private static final int REQUEST_CONTACT = 1;
+    private static final int REQUEST_PHONE = 2;
 
     private Crime mCrime;
     private EditText mTitleField;
@@ -144,8 +146,52 @@ public class CrimeFragment extends Fragment {
         mCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast toast = Toast.makeText(getContext(),"Call to suspect with ID:" + mCrime.getSuspectId(),Toast.LENGTH_LONG);
-                toast.show();
+                Intent pickNumber = new Intent(Intent.ACTION_PICK
+                        , ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
+                pickNumber.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
+                pickNumber.putExtra(Intent.EXTRA_TEXT,
+                        mCrime.getSuspectName());
+
+                startActivityForResult(pickNumber,  REQUEST_PHONE);
+
+                /*
+                Uri provider = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+
+                String[] queriFields = new String[]{
+                        ContactsContract.CommonDataKinds.Phone.NUMBER
+                };
+
+                String mSelectiumClause = ContactsContract.CommonDataKinds.Phone.CONTACT_ID  + "= ?";
+
+                String[] mSelectiumArgs = new String[]{
+                        String.valueOf(mCrime.getSuspectId())
+                };
+
+//                Toast msq = Toast.makeText(getContext(), "msg: " + mSelectiumArgs[0], Toast.LENGTH_LONG);
+//                msq.show();
+
+                Cursor cc = getContext().getContentResolver().query(
+                        provider,
+                        queriFields,
+                        mSelectiumClause,
+                        mSelectiumArgs,
+                        null
+                );
+
+                try {
+                    if (cc.getCount() == 0) {
+                        return;
+                    }
+
+                    cc.moveToFirst();
+                    String mNumber = cc.getString(0);
+
+                    Toast msq = Toast.makeText(getContext(), "Phone : " + mNumber, Toast.LENGTH_LONG);
+                    msq.show();
+
+                } finally {
+                    cc.close();
+                }*/
             }
         });
 
@@ -193,7 +239,7 @@ public class CrimeFragment extends Fragment {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setDate(date);
             updateDate();
-        } else {
+        } else if (requestCode == REQUEST_CONTACT && data != null){
             Uri contactUri = data.getData();
 
             // Определение полей, значения которых должны быть
@@ -219,6 +265,28 @@ public class CrimeFragment extends Fragment {
                 mCrime.setSuspectName(suspectName);
                 mCrime.setSuspectId(suspectId);
                 mSuspectButton.setText(suspectName);
+            } finally {
+                c.close();
+            }
+        } else if (requestCode == REQUEST_PHONE && data != null) {
+            //do something
+
+
+            Uri contactPhone = data.getData();
+
+            String[] queryFields = new String[] {
+                    ContactsContract.CommonDataKinds.Phone.NUMBER
+            };
+
+            Cursor c = getActivity().getContentResolver()
+                    .query(contactPhone, queryFields, null, null, null);
+
+            try {
+                c.moveToFirst();
+                String phone = c.getString(0);
+                Toast msg = Toast.makeText(getContext(), "tel: " + phone, Toast.LENGTH_LONG);
+                msg.show();
+
             } finally {
                 c.close();
             }
