@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
@@ -28,6 +29,8 @@ import android.widget.Toast;
 
 import java.util.Date;
 import java.util.UUID;
+
+
 
 /**
  * Created by God on 28.09.2016.
@@ -146,6 +149,7 @@ public class CrimeFragment extends Fragment {
         mCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+/*
                 Intent pickNumber = new Intent(Intent.ACTION_PICK
                         , ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
                 pickNumber.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
@@ -153,18 +157,21 @@ public class CrimeFragment extends Fragment {
                         mCrime.getSuspectName());
 
                 startActivityForResult(pickNumber,  REQUEST_PHONE);
+*/
 
-                /*
-                Uri provider = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+                Uri provider = Phone.CONTENT_URI;
 
                 String[] queriFields = new String[]{
-                        ContactsContract.CommonDataKinds.Phone.NUMBER
+                        Phone.NUMBER,
+                        Phone.IS_PRIMARY
                 };
 
-                String mSelectiumClause = ContactsContract.CommonDataKinds.Phone.CONTACT_ID  + "= ?";
+                String mSelectiumClause = Phone.CONTACT_ID + " = ? AND "
+                        + Phone.IS_PRIMARY + " = ?";
 
                 String[] mSelectiumArgs = new String[]{
-                        String.valueOf(mCrime.getSuspectId())
+                        String.valueOf(mCrime.getSuspectId()),
+                        String.valueOf(1)
                 };
 
 //                Toast msq = Toast.makeText(getContext(), "msg: " + mSelectiumArgs[0], Toast.LENGTH_LONG);
@@ -180,18 +187,24 @@ public class CrimeFragment extends Fragment {
 
                 try {
                     if (cc.getCount() == 0) {
+                        Toast msq = Toast.makeText(getContext(), "No number )=" , Toast.LENGTH_SHORT);
+                        msq.show();
+
                         return;
                     }
 
                     cc.moveToFirst();
-                    String mNumber = cc.getString(0);
+                    Uri number = Uri.parse(cc.getString(0));
 
-                    Toast msq = Toast.makeText(getContext(), "Phone : " + mNumber, Toast.LENGTH_LONG);
+                    Toast msq = Toast.makeText(getContext(), cc.getString(0) , Toast.LENGTH_SHORT);
                     msq.show();
+
+                  // Intent pickCall = new Intent(Intent.ACTION_DIAL, number);
+                  //  startActivity(pickCall);
 
                 } finally {
                     cc.close();
-                }*/
+                }
             }
         });
 
