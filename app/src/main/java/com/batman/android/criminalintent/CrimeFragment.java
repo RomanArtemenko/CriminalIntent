@@ -42,7 +42,6 @@ public class CrimeFragment extends Fragment {
 
     private static final int REQUEST_CODE = 0;
     private static final int REQUEST_CONTACT = 1;
-    private static final int REQUEST_PHONE = 2;
 
     private Crime mCrime;
     private EditText mTitleField;
@@ -149,16 +148,6 @@ public class CrimeFragment extends Fragment {
         mCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-/*
-                Intent pickNumber = new Intent(Intent.ACTION_PICK
-                        , ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
-                pickNumber.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
-                pickNumber.putExtra(Intent.EXTRA_TEXT,
-                        mCrime.getSuspectName());
-
-                startActivityForResult(pickNumber,  REQUEST_PHONE);
-*/
-
                 Uri provider = Phone.CONTENT_URI;
 
                 String[] queriFields = new String[]{
@@ -173,9 +162,6 @@ public class CrimeFragment extends Fragment {
                         String.valueOf(mCrime.getSuspectId()),
                         String.valueOf(1)
                 };
-
-//                Toast msq = Toast.makeText(getContext(), "msg: " + mSelectiumArgs[0], Toast.LENGTH_LONG);
-//                msq.show();
 
                 Cursor cc = getContext().getContentResolver().query(
                         provider,
@@ -194,13 +180,10 @@ public class CrimeFragment extends Fragment {
                     }
 
                     cc.moveToFirst();
-                    Uri number = Uri.parse(cc.getString(0));
+                    Uri number = Uri.parse("tel:" + cc.getString(0));
 
-                    Toast msq = Toast.makeText(getContext(), cc.getString(0) , Toast.LENGTH_SHORT);
-                    msq.show();
-
-                  // Intent pickCall = new Intent(Intent.ACTION_DIAL, number);
-                  //  startActivity(pickCall);
+                    Intent pickCall = new Intent(Intent.ACTION_DIAL, number);
+                    startActivity(pickCall);
 
                 } finally {
                     cc.close();
@@ -278,28 +261,6 @@ public class CrimeFragment extends Fragment {
                 mCrime.setSuspectName(suspectName);
                 mCrime.setSuspectId(suspectId);
                 mSuspectButton.setText(suspectName);
-            } finally {
-                c.close();
-            }
-        } else if (requestCode == REQUEST_PHONE && data != null) {
-            //do something
-
-
-            Uri contactPhone = data.getData();
-
-            String[] queryFields = new String[] {
-                    ContactsContract.CommonDataKinds.Phone.NUMBER
-            };
-
-            Cursor c = getActivity().getContentResolver()
-                    .query(contactPhone, queryFields, null, null, null);
-
-            try {
-                c.moveToFirst();
-                String phone = c.getString(0);
-                Toast msg = Toast.makeText(getContext(), "tel: " + phone, Toast.LENGTH_LONG);
-                msg.show();
-
             } finally {
                 c.close();
             }
