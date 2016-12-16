@@ -2,12 +2,14 @@ package com.batman.android.criminalintent;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
@@ -24,9 +26,12 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.Date;
 import java.util.UUID;
+
+
 
 /**
  * Created by God on 28.09.2016.
@@ -45,6 +50,7 @@ public class CrimeFragment extends Fragment {
     private CheckBox mSolvedCheckBox;
     private Button mReportButton;
     private Button mSuspectButton;
+    private Button mCallButton;
 
     public static CrimeFragment newInstance(UUID crimeId) {
         Bundle args = new Bundle();
@@ -145,8 +151,58 @@ public class CrimeFragment extends Fragment {
             }
         });
 
-        if (mCrime.getSuspect() != null) {
-            mSuspectButton.setText(mCrime.getSuspect());
+        mCallButton = (Button) v.findViewById(R.id.call_suspect);
+        mCallButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri provider = Phone.CONTENT_URI;
+
+                String[] queriFields = new String[]{
+                        Phone.NUMBER,
+                        Phone.IS_PRIMARY
+                };
+
+                String mSelectiumClause = Phone.CONTACT_ID + " = ? AND "
+                        + Phone.IS_PRIMARY + " = ?";
+
+                String[] mSelectiumArgs = new String[]{
+                        String.valueOf(mCrime.getSuspectId()),
+                        String.valueOf(1)
+                };
+
+                Cursor cc = getContext().getContentResolver().query(
+                        provider,
+                        queriFields,
+                        mSelectiumClause,
+                        mSelectiumArgs,
+                        null
+                );
+
+                try {
+                    if (cc.getCount() == 0) {
+                        Toast msq = Toast.makeText(getContext(), "No number )=" , Toast.LENGTH_SHORT);
+                        msq.show();
+
+                        return;
+                    }
+
+                    cc.moveToFirst();
+                    Uri number = Uri.parse("tel:" + cc.getString(0));
+
+                    Intent pickCall = new Intent(Intent.ACTION_DIAL, number);
+                    startActivity(pickCall);
+
+                } finally {
+                    cc.close();
+                }
+            }
+        });
+
+        if (mCrime.getSuspectId() != 0) {
+            mSuspectButton.setText(mCrime.getSuspectName());
+            mCallButton.setEnabled(true);
+        } else {
+            mCallButton.setEnabled(false);
         }
 
         PackageManager packageManager = getActivity().getPackageManager();
@@ -186,12 +242,13 @@ public class CrimeFragment extends Fragment {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setDate(date);
             updateDate();
-        } else {
+        } else if (requestCode == REQUEST_CONTACT && data != null){
             Uri contactUri = data.getData();
 
             // Определение полей, значения которых должны быть
             // возвращены запросом.
             String[] queryFields = new String[] {
+                    ContactsContract.Contacts._ID,
                     ContactsContract.Contacts.DISPLAY_NAME
             };
             // Выполнение запроса - contactUri здесь выполняет функции
@@ -206,9 +263,11 @@ public class CrimeFragment extends Fragment {
                 }
                 // Извлечение первого столбца данных - имени подозреваемого.
                 c.moveToFirst();
-                String suspect = c.getString(0);
-                mCrime.setSuspect(suspect);
-                mSuspectButton.setText(suspect);
+                long suspectId = c.getLong(0);
+                String suspectName = c.getString(1);
+                mCrime.setSuspectName(suspectName);
+                mCrime.setSuspectId(suspectId);
+                mSuspectButton.setText(suspectName);
             } finally {
                 c.close();
             }
@@ -230,18 +289,18 @@ public class CrimeFragment extends Fragment {
         String dateFormat = "EEE, MMM, dd";
         String dateString = DateFormat.format(dateFormat, mCrime.getDate()).toString();
 
-        String suspect = mCrime.getSuspect();
-        if (suspect == null) {
-            suspect = getString(R.string.crime_report_no_suspect);
+        String suspectName = mCrime.getSuspectName();
+        if (suspectName == null) {
+            suspectName = getString(R.string.crime_report_no_suspect);
         } else {
-            suspect = getString(R.string.crime_report_suspect);
+            suspectName = getString(R.string.crime_report_suspect, suspectName);
         }
 
         String report = getString(R.string.crime_report,
                                 mCrime.getTitle(),
                                 dateString,
                                 solvedString,
-                                suspect);
+                                suspectName);
 
         return report;
     }
