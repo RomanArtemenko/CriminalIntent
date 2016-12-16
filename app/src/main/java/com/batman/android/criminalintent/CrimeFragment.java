@@ -42,6 +42,7 @@ public class CrimeFragment extends Fragment {
 
     private static final int REQUEST_CODE = 0;
     private static final int REQUEST_CONTACT = 1;
+    private static final int REQUEST_CALL = 2;
 
     private Crime mCrime;
     private EditText mTitleField;
@@ -148,6 +149,13 @@ public class CrimeFragment extends Fragment {
         mCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Uri userUri = Uri.parse("content://contacts/people/" + mCrime.getSuspectId());
+                Intent pickCall = new Intent(Intent.ACTION_VIEW, userUri);
+//                pickCall.setType(Phone.CONTENT_TYPE);
+
+                startActivity(pickCall);
+
+/*
                 Uri provider = Phone.CONTENT_URI;
 
                 String[] queriFields = new String[]{
@@ -188,8 +196,8 @@ public class CrimeFragment extends Fragment {
                 } finally {
                     cc.close();
                 }
-            }
-        });
+*/             }
+      });
 
         if (mCrime.getSuspectId() != 0) {
             mSuspectButton.setText(mCrime.getSuspectName());
@@ -264,6 +272,9 @@ public class CrimeFragment extends Fragment {
             } finally {
                 c.close();
             }
+        } else if (requestCode == REQUEST_CALL && data != null) {
+            Uri callUri = data.getData();
+
         }
     }
 
