@@ -237,8 +237,11 @@ public class CrimeFragment extends Fragment {
         mPhotoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast msg = Toast.makeText(getContext(), "You clicked PhotoView (=", Toast.LENGTH_SHORT);
-                msg.show();
+/*                Toast msg = Toast.makeText(getContext(), "You clicked PhotoView (=", Toast.LENGTH_SHORT);
+                msg.show();*/
+                FragmentManager manager = getFragmentManager();
+                PhotoViewerFragment dialog = new PhotoViewerFragment();
+                dialog.show(manager, "Photo_viewer");
             }
         });
         updatePhotoView();
