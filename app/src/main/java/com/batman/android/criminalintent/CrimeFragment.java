@@ -234,6 +234,13 @@ public class CrimeFragment extends Fragment {
         });
 
         mPhotoView = (ImageView) v.findViewById(R.id.crime_photo);
+        mPhotoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast msg = Toast.makeText(getContext(), "You clicked PhotoView (=", Toast.LENGTH_SHORT);
+                msg.show();
+            }
+        });
         updatePhotoView();
 
         if (mCrime.getSuspectId() != 0) {

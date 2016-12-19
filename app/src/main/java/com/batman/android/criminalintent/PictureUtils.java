@@ -1,9 +1,13 @@
 package com.batman.android.criminalintent;
 
 import android.app.Activity;
+//import android.support.v4.app.Ac
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.os.Build;
+import android.view.Display;
+import android.widget.Toast;
 
 /**
  * Created by God on 17.12.2016.
@@ -13,7 +17,13 @@ public class PictureUtils {
     public static Bitmap getScaledBitmap(String path, Activity activity) {
         Point size = new Point();
 
-        activity.getWindowManager().getDefaultDisplay().getSize(size);
+        if (Build.VERSION.SDK_INT <= 10) {
+            Display display = activity.getWindowManager().getDefaultDisplay();
+            size.x = display.getWidth();
+            size.y = display.getHeight();
+        } else {
+            activity.getWindowManager().getDefaultDisplay().getSize(size);
+        }
 
         return getScaledBitmap(path, size.x, size.y);
     }
