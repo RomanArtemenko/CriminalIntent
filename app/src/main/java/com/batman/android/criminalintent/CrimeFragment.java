@@ -240,7 +240,7 @@ public class CrimeFragment extends Fragment {
 /*                Toast msg = Toast.makeText(getContext(), "You clicked PhotoView (=", Toast.LENGTH_SHORT);
                 msg.show();*/
                 FragmentManager manager = getFragmentManager();
-                PhotoViewerFragment dialog = new PhotoViewerFragment();
+                PhotoViewerFragment dialog = PhotoViewerFragment.newInstance(mPhotoFile.getPath());
                 dialog.show(manager, "Photo_viewer");
             }
         });
