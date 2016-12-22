@@ -239,9 +239,12 @@ public class CrimeFragment extends Fragment {
             public void onClick(View v) {
 /*                Toast msg = Toast.makeText(getContext(), "You clicked PhotoView (=", Toast.LENGTH_SHORT);
                 msg.show();*/
-                FragmentManager manager = getFragmentManager();
+/*                FragmentManager manager = getFragmentManager();
                 PhotoViewerFragment dialog = PhotoViewerFragment.newInstance(mPhotoFile.getPath());
-                dialog.show(manager, "Photo_viewer");
+                dialog.show(manager, "Photo_viewer");*/
+                Intent intent = PhotoViewerActivity.newIntent(getActivity(), mPhotoFile.getPath());
+
+                startActivity(intent);
             }
         });
         updatePhotoView();

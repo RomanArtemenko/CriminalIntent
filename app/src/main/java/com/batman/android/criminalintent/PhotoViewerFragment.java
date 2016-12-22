@@ -32,6 +32,7 @@ public class PhotoViewerFragment extends DialogFragment {
         return fragment;
     }
 
+/*
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         String path = (String) getArguments().getSerializable(FILE_PATH);
@@ -46,13 +47,14 @@ public class PhotoViewerFragment extends DialogFragment {
                 .setView(v)
                 .create();
     }
+*/
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
-/*    @Override
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         String path = (String) getArguments().getSerializable(FILE_PATH);
 
@@ -62,5 +64,5 @@ public class PhotoViewerFragment extends DialogFragment {
         mImageView.setImageURI(Uri.parse(path));
 
         return v;
-    }*/
+    }
 }
