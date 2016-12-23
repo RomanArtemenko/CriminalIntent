@@ -42,13 +42,6 @@ public class PictureUtils {
         //calculate the degree of scaling
         int inSampleSize = 1;
         if (srcHeight > destHeight || srcWidth > destWidth) {
-/*
-            if (srcWidth < srcHeight) {
-                inSampleSize = Math.round(srcHeight / destHeight);
-            } else {
-                inSampleSize = Math.round(srcWidth / destWidth);
-            }
-*/
             inSampleSize = Math.round(Math.max(srcHeight / destHeight, srcWidth / destWidth));
         }
 

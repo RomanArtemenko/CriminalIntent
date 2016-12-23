@@ -142,11 +142,7 @@ public class CrimeFragment extends Fragment {
                         .setSubject(getString(R.string.crime_report_subject))
                         .setChooserTitle(getString(R.string.send_report))
                         .createChooserIntent();
- /*               Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("text/plain");
-                intent.putExtra(Intent.EXTRA_TEXT, getCrimeReport());
-                intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crime_report_subject));
-                intent = Intent.createChooser(intent, getString(R.string.send_report)); */
+
                 startActivity(intent);
             }
         });
@@ -237,8 +233,6 @@ public class CrimeFragment extends Fragment {
         mPhotoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-/*                Toast msg = Toast.makeText(getContext(), "You clicked PhotoView (=", Toast.LENGTH_SHORT);
-                msg.show();*/
                 FragmentManager manager = getFragmentManager();
                 PhotoViewerFragment dialog = PhotoViewerFragment.newInstance(mPhotoFile.getPath());
                 dialog.show(manager, "Photo_viewer");
