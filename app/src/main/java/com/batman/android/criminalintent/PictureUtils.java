@@ -5,7 +5,9 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.nfc.Tag;
 import android.os.Build;
+import android.util.Log;
 import android.view.Display;
 import android.widget.Toast;
 
@@ -17,7 +19,7 @@ public class PictureUtils {
     public static Bitmap getScaledBitmap(String path, Activity activity) {
         Point size = new Point();
 
-        if (Build.VERSION.SDK_INT <= 10) {
+        if (Build.VERSION.SDK_INT < 13) {
             Display display = activity.getWindowManager().getDefaultDisplay();
             size.x = display.getWidth();
             size.y = display.getHeight();
@@ -40,11 +42,14 @@ public class PictureUtils {
         //calculate the degree of scaling
         int inSampleSize = 1;
         if (srcHeight > destHeight || srcWidth > destWidth) {
-            if (srcWidth > srcHeight) {
+/*
+            if (srcWidth < srcHeight) {
                 inSampleSize = Math.round(srcHeight / destHeight);
             } else {
                 inSampleSize = Math.round(srcWidth / destWidth);
             }
+*/
+            inSampleSize = Math.round(Math.max(srcHeight / destHeight, srcWidth / destWidth));
         }
 
         options = new BitmapFactory.Options();
