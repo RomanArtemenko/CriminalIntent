@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
@@ -18,12 +19,14 @@ import android.support.v4.app.ShareCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -238,14 +241,24 @@ public class CrimeFragment extends Fragment {
                 dialog.show(manager, "Photo_viewer");
             }
         });
-        updatePhotoView();
 
-        if (mCrime.getSuspectId() != 0) {
-            mSuspectButton.setText(mCrime.getSuspectName());
-            mCallButton.setEnabled(true);
-        } else {
-            mCallButton.setEnabled(false);
-        }
+        ViewTreeObserver vto = mPhotoView.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                ViewTreeObserver otv = mPhotoView.getViewTreeObserver();
+
+                if (Build.VERSION.SDK_INT < 16) {
+                    otv.removeGlobalOnLayoutListener(this);
+                } else {
+                    otv.removeOnGlobalLayoutListener(this);
+                }
+
+                updatePhotoView();
+            }
+        });
+
+        updateCallButton();
 
         return v;
     }
@@ -346,10 +359,21 @@ public class CrimeFragment extends Fragment {
     private void updatePhotoView() {
         if (mPhotoFile == null || !mPhotoFile.exists()) {
             mPhotoView.setImageDrawable(null);
+            mPhotoView.setClickable(false);
         } else {
             Bitmap bitmap = PictureUtils.getScaledBitmap(
-                    mPhotoFile.getPath(), getActivity());
+                    mPhotoFile.getPath(), mPhotoView.getWidth(), mPhotoView.getHeight());
             mPhotoView.setImageBitmap(bitmap);
+            mPhotoView.setClickable(true);
+        }
+    }
+
+    private void updateCallButton() {
+        if (mCrime.getSuspectId() != 0) {
+            mSuspectButton.setText(mCrime.getSuspectName());
+            mCallButton.setEnabled(true);
+        } else {
+            mCallButton.setEnabled(false);
         }
     }
 
